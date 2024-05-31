@@ -86,6 +86,8 @@ def joining_a_group(num):
                         result = client(JoinChannelRequest(channel=i))
                         count_sub_chats += 1
                         print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
+                        with open("start_from.txt", "w") as f:
+                            f.write(str(e + 1))
                         # print(client.get_entity(channel))
                         time.sleep(randrange(10, 20, 1))
                         break
@@ -116,7 +118,8 @@ def joining_a_group(num):
                         list_nosub_chats.append(i)
                         need_sleep = False
                         break
-            sleep()
+            if need_sleep:
+                sleep()
         else:
            for j in li[e:e + num]:
                 ind = j.find("http")
