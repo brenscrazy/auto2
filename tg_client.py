@@ -15,9 +15,9 @@ def dbm_base():
     try:
         file['api_id2']
     except:
-        file['api_id2'] = input('Введите api_id:')
-        file['api_hash2'] = input('Введите api_hash:')
-        file['phone2'] = input('Введите номер телефона: ')
+        file['api_id2'] = input('Enter api_id:')
+        file['api_hash2'] = input('Enter api_hash:')
+        file['phone2'] = input('Enter phone number: ')
     file.close()
     return dbm.open('api2.dbm', 'r')
 
