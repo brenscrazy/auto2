@@ -72,89 +72,91 @@ def joining_a_group(num):
         file.write(f'{datetime.now()}: Joining groups\n')
     finally:
         file.close()
-    for e in range(0, len(li), num):
+    with open("start_from.txt", "r") as f:
+        start_from = int(f.read().strip())
+    for e in range(start_from, len(li), num):
         count_step += 1
         if count_step <= const:
             for j in li[e:e + num]:
                 ind = j.find("http")
                 i = j[ind:]
-                try:
-                    result = client(JoinChannelRequest(channel=i))
-                    count_sub_chats += 1
-                    print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
-                    # print(client.get_entity(channel))
-                    time.sleep(randrange(10, 20, 1))
-                except ChannelsTooMuchError:
-                    error_processing(i, 'Too many joins.')
-                    sleep()
-                    client(JoinChannelRequest(channel=i))
-                    count_sub_chats += 1
-                    print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
-                    time.sleep(randrange(10, 20, 1))
-                except errors.FloodWaitError as e:
-                    error_processing(i, 'Missed timings. Will join a bit later!')
-                    print(f'{datetime.now()}: Will sleep for {e.seconds + 10}')
-                    time.sleep(e.seconds + 10)
-                    client(JoinChannelRequest(channel=i))
-                    count_sub_chats += 1
-                    print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
-                    time.sleep(randrange(10, 20, 1))
-                except ChannelInvalidError:
-                    error_processing(i, 'Wrong channel object.')
-                    list_nosub_chats.append(i)
-                    continue
-                except ChannelPrivateError:
-                    error_processing(i, 'Channel is private.')
-                    list_nosub_chats.append(i)
-                    continue
-                except errors.UsernameInvalidError as e:
-                    error_processing(i, 'Wrong channel name.')
-                    list_nosub_chats.append(i)
-                    continue
-                except Exception as e:
-                    error_processing(i, f'Channel name {i} is wrong, or does not exists')
-                    list_nosub_chats.append(i)
-                    continue
+                need_sleep = True
+                while True:
+                    try:
+                        result = client(JoinChannelRequest(channel=i))
+                        count_sub_chats += 1
+                        print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
+                        # print(client.get_entity(channel))
+                        time.sleep(randrange(10, 20, 1))
+                        break
+                    except ChannelsTooMuchError:
+                        error_processing(i, 'Too many joins.')
+                        sleep()
+                    except errors.FloodWaitError as e:
+                        error_processing(i, 'Missed timings. Will join a bit later!')
+                        print(f'{datetime.now()}: Will sleep for {e.seconds + 10}')
+                        time.sleep(e.seconds + 10)
+                    except ChannelInvalidError:
+                        error_processing(i, 'Wrong channel object.')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
+                    except ChannelPrivateError:
+                        error_processing(i, 'Channel is private.')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
+                    except errors.UsernameInvalidError as e:
+                        error_processing(i, 'Wrong channel name.')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
+                    except Exception as e:
+                        error_processing(i, f'Channel name {i} is wrong, or does not exists')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
             sleep()
         else:
-            for i in li[e:e + num]:
-                try:
-                    result = client(JoinChannelRequest(channel=i))
-                    count_sub_chats += 1
-                    print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
-                    # print(client.get_entity(channel))
-                    time.sleep(randrange(10, 20, 1))
-                except ChannelsTooMuchError:
-                    error_processing(i, 'Too many joins.')
-                    sleep()
-                    client(JoinChannelRequest(channel=i))
-                    count_sub_chats += 1
-                    print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
-                    time.sleep(randrange(10, 20, 1))
-                except errors.FloodWaitError as e:
-                    error_processing(i, 'Missed timings. Will join a bit later!')
-                    print(f'{datetime.now()}: Will sleep for {e.seconds + 10}')
-                    time.sleep(e.seconds + 10)
-                    client(JoinChannelRequest(channel=i))
-                    count_sub_chats += 1
-                    print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
-                    time.sleep(randrange(10, 20, 1))
-                except ChannelInvalidError:
-                    error_processing(i, 'Wrong channel object.')
-                    list_nosub_chats.append(i)
-                    continue
-                except ChannelPrivateError:
-                    error_processing(i, 'Channel is private.')
-                    list_nosub_chats.append(i)
-                    continue
-                except errors.UsernameInvalidError as e:
-                    error_processing(i, 'Wrong channel name.')
-                    list_nosub_chats.append(i)
-                    continue
-                except Exception as e:
-                    error_processing(i, f'Channel name {i} is wrong, or does not exists')
-                    list_nosub_chats.append(i)
-                    continue
+           for j in li[e:e + num]:
+                ind = j.find("http")
+                i = j[ind:]
+                need_sleep = True
+                while True:
+                    try:
+                        result = client(JoinChannelRequest(channel=i))
+                        count_sub_chats += 1
+                        print(f'{datetime.now()}: ({count_sub_chats}) Joined {i}')
+                        # print(client.get_entity(channel))
+                        time.sleep(randrange(10, 20, 1))
+                        break
+                    except ChannelsTooMuchError:
+                        error_processing(i, 'Too many joins.')
+                        sleep()
+                    except errors.FloodWaitError as e:
+                        error_processing(i, 'Missed timings. Will join a bit later!')
+                        print(f'{datetime.now()}: Will sleep for {e.seconds + 10}')
+                        time.sleep(e.seconds + 10)
+                    except ChannelInvalidError:
+                        error_processing(i, 'Wrong channel object.')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
+                    except ChannelPrivateError:
+                        error_processing(i, 'Channel is private.')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
+                    except errors.UsernameInvalidError as e:
+                        error_processing(i, 'Wrong channel name.')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
+                    except Exception as e:
+                        error_processing(i, f'Channel name {i} is wrong, or does not exists')
+                        list_nosub_chats.append(i)
+                        need_sleep = False
+                        break
     file_nosub_channels = open(os.path.join(BASE_DIR, "nosub_channels.txt"), 'w')
     try:
         for i in list_nosub_chats:
