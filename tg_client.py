@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from random import randrange
 import dbm
+import gc
 
 from telethon.sync import TelegramClient, errors
 from telethon.tl.functions.channels import JoinChannelRequest
@@ -118,6 +119,8 @@ def joining_a_group(num):
                         list_nosub_chats.append(i)
                         need_sleep = False
                         break
+                    gc.collect()
+                gc.collect()
             if need_sleep:
                 sleep()
         else:
